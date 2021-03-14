@@ -1,6 +1,6 @@
 # WinApi_start-Projects
  
 Drawing; 
-Pen shows the state of drawing; 
-The coordinates are displayed in the upper left corner.
+The pen shows the state of drawing; 
+The coordinates of the cursor are displayed in the upper left corner.
 AL-himik
