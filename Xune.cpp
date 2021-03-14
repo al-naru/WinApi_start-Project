@@ -62,7 +62,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 {
 	HDC hdc; // контекст устройства
 	PAINTSTRUCT ps; 
-	PAINTSTRUCT ptP; // инфоормация о окрашивании
 
 	switch (message)
 	{
@@ -118,7 +117,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_LBUTTONUP:
 	{
 		start = false;
-		break;
 	}
 	return 0;
 
@@ -127,21 +125,18 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		hdc = GetDC(hWnd);
 		Fill(hWnd, hdc);
 		start = true;
-		return 0;
 	}
-	break;
+	return 0;
 
 	case WM_DESTROY:
 	{
 		PostQuitMessage(0);
-		return 0;
 	}
-	break;
+	return 0;
 
 	case WM_CLOSE:
 	{
 		DestroyWindow(hWnd);
-		break;
 	}
 	return 0;
 
@@ -162,7 +157,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		break;
 
 		default:
-			break;
 		}
 	}
 
