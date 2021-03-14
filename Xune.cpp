@@ -18,6 +18,7 @@ int provX, provY;
 POINT pt;
 RECT r;
 HINSTANCE hInst;
+bool xune;
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -45,6 +46,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	HDC hdc;
 
+	hdc = GetDC(hWnd);
+	RECT r;
+
+	GetClientRect(hWnd, &r);
+	FillRect(hdc, &r, (HBRUSH)(COLOR_WINDOW + 1));
+
 	while (true)
 	{
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -53,9 +60,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			DispatchMessage(&msg);
 		}
 
-		if (msg.message == WM_QUIT) return 0;
+		if (xune == true)
+		{
+			return 0;
+		}
 	}
-	return (int)msg.wParam;
+	return static_cast<int>(msg.wParam);
 }
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -130,7 +140,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 	case WM_DESTROY:
 	{
-		PostQuitMessage(0);
+		xune = true;
 	}
 	return 0;
 
@@ -157,7 +167,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		break;
 
 		default:
-		    break;
+			break;
 		}
 	}
 
@@ -195,15 +205,8 @@ void Fill(HWND hWnd, HDC hdc)
 
 void Rendering(HDC hdc, HWND hWnd)
 {
-	RenderLine(hdc, hWnd);
-}
-
-void RenderLine(HDC hdc, HWND hWnd)
-{
 	GetCursorPos(&pt);
 	ScreenToClient(hWnd, &pt);
 
 	Line(hdc, provX, provY, pt.x, pt.y);
-
-	DeleteObject(hdc);
 }
