@@ -6,19 +6,41 @@
 #include <windowsx.h>
 #include <atlstr.h>
 
-#define IDD_CLEAR 1332
-bool start;
+//#include button style
+#include <CommCtrl.h>
+#include <Shlobj.h>
+#pragma comment(lib,"Comctl32.lib")
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
+#define IDB_CLEAR 1001
+
+//ID menu scrolbar
+#define IDM_FILE 2001
+
+//ID file
+#define IDM_EXIT 2101
+#define IDM_SAVE 2102
+
 const int nWeight = 600, nHeight = 600;
-WORD xPos, yPos, nSize;
-void Rendering(HDC, HWND);
-void Fill(HWND, HDC);
-void RenderLine(HDC, HWND);
+
+bool start;
+bool xune;
+
 int xText, yText;
 int provX, provY;
+
+WORD xPos, yPos;
+WORD nSize;
 POINT pt;
 RECT r;
 HINSTANCE hInst;
-bool xune;
+
+void Rendering(HDC, HWND);
+void Fill(HWND, HDC);
+void RenderLine(HDC, HWND);
+void CreateMenu(HWND);
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -37,6 +59,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	if (!RegisterClassEx(&wc))
 		return EXIT_FAILURE;
+
+	// Инициализация Controls
+	INITCOMMONCONTROLSEX init = { sizeof(INITCOMMONCONTROLSEX), ICC_WIN95_CLASSES }; //Controls
+	InitCommonControlsEx(&init);
 
 	HWND hWnd = CreateWindowEx(0, L"WindowClass", L"paint", WS_SYSMENU | WS_MINIMIZEBOX,
 		(GetSystemMetrics(SM_CXSCREEN) - nWeight) / 2, (GetSystemMetrics(SM_CYSCREEN) - nHeight) / 2,
@@ -67,6 +93,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 	return static_cast<int>(msg.wParam);
 }
+
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -156,7 +183,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 		switch (wnId)
 		{
-		case IDD_CLEAR: 
+		case IDB_CLEAR: 
 		{
 			hdc = GetDC(hWnd);
 			RECT r;
@@ -165,17 +192,16 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 			FillRect(hdc, &r, (HBRUSH)(COLOR_WINDOW + 1));
 		}
 		break;
-
-		default:
-			break;
 		}
 	}
 
 	case WM_CREATE: 
 	{
+		CreateMenu(hWnd); 
+
 		HWND hwBtn = CreateWindow(L"button", L"Clear",
 			WS_CHILD | WS_VISIBLE | WS_BORDER,
-			100, 0, 120, 30, hWnd, reinterpret_cast<HMENU>(IDD_CLEAR), hInst, NULL);
+			100, 0, 120, 30, hWnd, reinterpret_cast<HMENU>(IDB_CLEAR), hInst, NULL);
 		ShowWindow(hwBtn, SW_SHOWNORMAL);
 	}
 	return 0;
@@ -210,3 +236,15 @@ void Rendering(HDC hdc, HWND hWnd)
 
 	Line(hdc, provX, provY, pt.x, pt.y);
 }
+
+void CreateMenu(HWND hWnd) {
+	HMENU hMenubar = CreateMenu();
+	HMENU hFile = CreateMenu();
+
+	AppendMenu(hMenubar, MF_POPUP, IDM_FILE, L"File");
+
+	AppendMenu(hFile, MF_STRING, IDM_SAVE, L"Save");
+	AppendMenu(hFile, MF_STRING, IDM_EXIT, L"EXIT");
+
+	SetMenu(hWnd, hMenubar);
+};
